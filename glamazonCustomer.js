@@ -22,7 +22,7 @@ function listProducts() {
         if (err) throw err;
         console.log("ITEMS AVAILABLE\n")
         for (var i = 0; i < res.length; i++) {
-            console.log("Product ID: " + res[i].item_id + "\nProduct Name: " + res[i].product_name + "\nPrice: " + res[i].price + "\n")
+            console.log("Product ID: " + res[i].item_id + "\nProduct Name: " + res[i].product_name + "\nPrice: $" + res[i].price + "\nTotal in Stock: " + res[i].stock_quantity + "\n")
         }
 
         orderProduct();
@@ -33,10 +33,9 @@ function listProducts() {
 function orderProduct() {
     inquirer.prompt([
         {
-            type: "list",
+            type: "input",
             name: "whichID",
             message: "What is the ID of the product you wish to buy?",
-            choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
         },
         {
             type: "input",
@@ -44,7 +43,7 @@ function orderProduct() {
             message: "How much of that item do you want?"
         },
     ]).then(answers => {
-        var selection = parseInt(answers.whichID);
+        var selection = answers.whichID;
         var quantity = answers.howmany;
         connection.query("SELECT * FROM products WHERE item_id = ?", [selection], function (err, res) {
   
