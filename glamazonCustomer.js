@@ -26,13 +26,7 @@ function listProducts() {
         }
 
         orderProduct();
-        // What is the ID of the product you would like to purchase?
-        
 
-        // .then: How many of the product would you like to purchase?
-
-        // console.log(res)
-        //connection.end();
     });
 };
 
@@ -50,6 +44,28 @@ function orderProduct() {
             message: "How much of that item do you want?"
         },
     ]).then(answers => {
-        console.log("You chose " + answers.whichID);
+        var selection = parseInt(answers.whichID);
+        var quantity = answers.howmany;
+        connection.query("SELECT * FROM products WHERE item_id = ?", [selection], function (err, res) {
+  
+            var newMath = res[0].stock_quantity - quantity;
+            var newCost = res[0].price * quantity;
+            var newItem = res[0].product_name;
+
+            function placeOrder() {
+                connection.query("UPDATE products SET stock_quantity = ? WHERE item_id = ?", [newMath, selection], function(err, res) {
+                    console.log("That item is " + newItem + ". You have ordered " + quantity + " units! Your cost is $" + newCost + ".");
+                });
+            };
+
+            if (newMath >= 0) {
+                placeOrder();
+                console.log("Success! Your new item is on its way.")
+            } else {
+                console.log("Sorry! We do not have enough in stock.")
+
+            }
+        });  
     });
+
 };
